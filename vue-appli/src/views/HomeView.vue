@@ -5,7 +5,15 @@
         <tr v-if="flag"></tr>
 <!-- 作成したデータベースの入力項目を作成 -->
         <tr>
-          <td>相手名称：</td><td><input type="txt" v-model="company"></td>
+          <td>相手名称：</td>
+          <td>
+            <select v-model="company">
+              <option disabled value="">選択して下さい</option>
+              <option v-for="company in companies" v-bind:value="company.id" v-bind:key="company.id">
+                  {{ company.name }}
+              </option>
+            </select>
+          </td>
         </tr>
         <tr>
           <td>案件名：</td><td><input type="txt" v-model="caseName"></td>
@@ -38,19 +46,34 @@
           <td>拡張2：</td><td><input type="txt" v-model="column2"></td>
         </tr> -->
       </table>
-        <button class="button is-primary" @click="submit">送信</button>
+        <button class="button is-primary" @click="addInvoice">送信</button>
   </div>
 </template>
 
 <script>
+  import { db } from "../main";
+  import { collection,addDoc,getDocs } from "firebase/firestore";
   export default {
     data(){
       return {
         name: '',
         mailaddress: '',
         password: '',
-        flag: false
+        flag: false,
+        companies: [],
       }
+    },
+    mounted: async function(){
+      // firestoreからcompanyの一覧を取得する（selectで表示するため）
+      const querySnapshot = await getDocs(collection(db, "company"));
+      querySnapshot.forEach((doc) => {
+        const company = {
+          id: doc.id,
+          name: doc.data().name
+        };
+        // selectでloopを回すための変数に追加していく
+        this.companies.push(company);
+      });
     },
     methods: {
       // signs: function () {
@@ -61,8 +84,24 @@
       toggleFlag: function () {
         this.flag = !this.flag;
       },
-      submit: function () {
-        this.$store.dispatch('submit', { company: this.company});
+      addInvoice: function () {
+        // dispatchの必要はなく、ここでfirestoreに直接読み書きすればOKでは？
+        // this.$store.dispatch('submit', { company: this.company});
+        const invoiceRef = collection(db, 'invoice');
+        addDoc(invoiceRef, {
+          company_id:this.company,
+          name:this.caseName,
+          deadline:this.deadline,
+          alertdate: '',
+          case: '',
+          casemanager: '',
+          column1: '',
+          column2: '',
+          money: '',
+          needtime: '',
+          repeat: '',
+          tax: '',},
+          { merge: true });
       }
     }
   }
