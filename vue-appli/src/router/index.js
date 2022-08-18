@@ -7,7 +7,7 @@ import VueRouter from 'vue-router'
 // Vue3への変更に伴い追加 ここから
 import { createRouter, createWebHistory } from 'vue-router'
 // Vue3への変更に伴い追加 ここまで
-import HomeView from '../views/HomeView.vue'
+// import HomeView from '../views/HomeView.vue'
 // Vue3への変更に伴いコメントアウト ここから
 // import Vuex from 'vuex'
 // Vue3への変更に伴いコメントアウト ここまで
@@ -22,9 +22,19 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    name: 'home',
-    component: HomeView
+    path: '/invoice/add',
+    name: 'invoice_add',
+    component: () => import('../views/NewInvoiceView.vue')
+  },
+  {
+    path: '/list',
+    name: 'list',
+    component: () => import('../views/ListCompanyView.vue')
+  },
+  {
+    path: '/company/:id',
+    name: 'company',
+    component: () => import('../views/ListInvoiceView.vue')
   },
   {
     path: '/about',
