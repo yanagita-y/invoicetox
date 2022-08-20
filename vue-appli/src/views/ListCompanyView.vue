@@ -4,6 +4,7 @@
     <table>
         <template v-for="company in companies" :key="company.id">
             <tr>
+                <!-- <td><button>{{ company.name }}</button></td><td><button>削除</button></td> -->
                 <td><router-link :to="{ name: 'company', params: {id: company.id } }">{{ company.name }}</router-link></td><td><button @click="deleteCompany(company.id)">削除</button></td>
             </tr>
         </template>
@@ -23,9 +24,21 @@
         password: '',
         flag: false,
         companies: [],
+        invoices: []
       }
     },
     mounted: async function(){
+      // firestoreからinvoiceの一覧を取得する（一覧表示のため）
+      const querySnapshot2 = await getDocs(collection(db, "invoice"));
+      querySnapshot2.forEach((doc) => {
+        const invoice = {
+          id: doc.id,
+          name: doc.data().name
+        };
+        // selectでloopを回すための変数に追加していく
+        this.invoices.push(invoice);
+      });
+
       // firestoreからcompanyの一覧を取得する（selectで表示するため）
       const querySnapshot = await getDocs(collection(db, "company"));
       querySnapshot.forEach((doc) => {

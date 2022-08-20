@@ -22,7 +22,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/invoice/add',
+    path: '/:id/add',
     name: 'invoice_add',
     component: () => import('../views/NewInvoiceView.vue')
   },

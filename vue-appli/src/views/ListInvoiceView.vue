@@ -2,10 +2,9 @@
   <div class="signup">
     <h1>{{ name }}</h1>
     <table>
-        <template v-for="company in companies" :key="company.id">
+          <template v-for="invoice in invoices" :key="invoice.id">
             <tr>
-                <!-- <td><button>{{ company.name }}</button></td><td><button>削除</button></td> -->
-                <td>ここに請求書の一覧を表示してください</td>
+                <td>{{ invoice.name }}</td><td><button @click="deleteInvoice(invoice.id)">削除</button></td>
             </tr>
         </template>
     </table>
@@ -19,7 +18,7 @@
 <script>
   import { db } from "../main";
   import { collection,addDoc,getDocs } from "firebase/firestore";
-  import { doc, getDoc } from "firebase/firestore";
+  import { doc, getDoc, runTransaction } from "firebase/firestore";
   export default {
     data(){
       return {
@@ -29,14 +28,14 @@
         password: '',
         flag: false,
         companies: [],
+        invoices: []
       }
     },
     mounted: async function(){
         this.company_id = this.$route.params.id;
         console.log(this.company_id);
-
         
-        // firestoreから自分のデータを取得rする
+        // firestoreから自分のデータを取得する
         const docRef = doc(db, "company", this.company_id);
         const docSnap = await getDoc(docRef);
 
@@ -48,16 +47,31 @@
             console.log("No such document!");
         }
 
-      // firestoreからcompanyの一覧を取得する（selectで表示するため）
-      const querySnapshot = await getDocs(collection(db, "company"));
-      querySnapshot.forEach((doc) => {
-        const company = {
-          id: doc.id,
-          name: doc.data().name
-        };
-        // selectでloopを回すための変数に追加していく
-        this.companies.push(company);
-      });
+        // firestoreからinvoiceの一覧を取得する（一覧表示のため）
+        const querySnapshot2 = await getDocs(collection(db, "invoice"));
+        querySnapshot2.forEach((doc) => {
+          console.log(doc);
+          console.log(doc.id);
+          console.log(doc.data().name);
+          const invoice = {
+            id: doc.id,
+            name: doc.data().name
+          };
+          // selectでloopを回すための変数に追加していく
+          this.invoices.push(invoice);
+          console.log(this.invoices)
+        });
+
+      // // firestoreからcompanyの一覧を取得する（selectで表示するため）
+      // const querySnapshot = await getDocs(collection(db, "company"));
+      // querySnapshot.forEach((doc) => {
+      //   const company = {
+      //     id: doc.id,
+      //     name: doc.data().name
+      //   };
+      //   // selectでloopを回すための変数に追加していく
+      //   this.companies.push(company);
+      // });
     },
     methods: {
       // signs: function () {
@@ -68,6 +82,26 @@
       toggleFlag: function () {
         this.flag = !this.flag;
       },
+
+      deleteInvoice: async function(invoice_id){
+        try {
+            // トランザクションの開始
+            await runTransaction(db, async (transaction) => {
+              // 請求書データを削除
+              transaction.delete(doc(db, "invoice", invoice_id));
+            });
+            alert('削除しました');
+            // 表示している一覧から削除した会社を消す
+            for(let i=0; i<this.invoices.length; i++){
+              if(this.invoices[i].id == invoice_id){
+                this.invoices.splice(i, 1);
+              }
+            }
+          } catch (e) {
+            console.log("Transaction failed: ", e);
+          }
+      },
+
       addInvoice: function () {
         // dispatchの必要はなく、ここでfirestoreに直接読み書きすればOKでは？
         // this.$store.dispatch('submit', { company: this.company});
