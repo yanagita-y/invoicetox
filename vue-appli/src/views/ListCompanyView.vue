@@ -9,6 +9,7 @@
             </tr>
         </template>
     </table>
+    <router-link :to="{ name: 'invoice_add'}">追加</router-link>
   </div>
 </template>
 

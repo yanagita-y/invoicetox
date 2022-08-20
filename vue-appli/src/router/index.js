@@ -22,7 +22,12 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/:id/add',
+    path: '/:id/invoice/add',
+    name: 'company_invoice_add',
+    component: () => import('../views/NewInvoiceView.vue')
+  },
+  {
+    path: '/invoice/add',
     name: 'invoice_add',
     component: () => import('../views/NewInvoiceView.vue')
   },

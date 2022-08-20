@@ -10,7 +10,7 @@
     </table>
 
 
-    <router-link :to="{ name: 'invoice_add'}">追加</router-link>
+    <router-link :to="{ name: 'company_invoice_add'}">追加</router-link>
     <router-link :to="{ name: 'list'}">戻る</router-link>
   </div>
 </template>

@@ -7,12 +7,19 @@
         <tr>
           <td>相手名称：</td>
           <td>
-            <select v-model="company">
-              <option disabled value="">選択して下さい</option>
-              <option v-for="company in companies" v-bind:value="company.id" v-bind:key="company.id">
-                  {{ company.name }}
-              </option>
-            </select>
+            <template v-if="company_id">
+              {{ company_name }}
+              <input type="hidden" v-model="company">
+            </template>
+            <template v-else>
+              <select v-model="company">
+                <option disabled value="">選択して下さい</option>
+                <option v-for="company in companies" v-bind:value="company.id" v-bind:key="company.id">
+                    {{ company.name }}
+                </option>
+              </select>
+            </template>
+
           </td>
         </tr>
         <tr>
@@ -61,9 +68,13 @@
         password: '',
         flag: false,
         companies: [],
+        company_id: false,
+        company_name: '',
       }
     },
     mounted: async function(){
+      this.company_id = this.$route.params.id;
+
       // firestoreからcompanyの一覧を取得する（selectで表示するため）
       const querySnapshot = await getDocs(collection(db, "company"));
       querySnapshot.forEach((doc) => {
@@ -71,6 +82,10 @@
           id: doc.id,
           name: doc.data().name
         };
+        if(doc.id === this.company_id){
+          this.company_name = doc.data().name;
+          this.company = this.company_id
+        }
         // selectでloopを回すための変数に追加していく
         this.companies.push(company);
       });
@@ -85,6 +100,8 @@
         this.flag = !this.flag;
       },
       addInvoice: function () {
+        console.log(this.company);
+        
         // dispatchの必要はなく、ここでfirestoreに直接読み書きすればOKでは？
         // this.$store.dispatch('submit', { company: this.company});
         const invoiceRef = collection(db, 'invoice');
