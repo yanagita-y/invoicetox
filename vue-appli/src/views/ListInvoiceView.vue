@@ -1,10 +1,10 @@
 <template>
   <div class="signup">
-    <h1>{{ name }}</h1>
+    <h1 class="title">{{ name }}</h1>
     <table>
           <template v-for="invoice in invoices" :key="invoice.id">
             <tr>
-                <td>{{ invoice.name }}</td><td><button @click="deleteInvoice(invoice.id)">削除</button></td>
+                <td class="has-text-primary has-background-primary-light">{{ invoice.name }}</td><td><button class="button is-link is-light" @click="deleteInvoice(invoice.id)">削除</button></td>
             </tr>
         </template>
     </table>

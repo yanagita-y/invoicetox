@@ -53,8 +53,10 @@
           <td>拡張2：</td><td><input type="txt" v-model="column2"></td>
         </tr> -->
       </table>
-        <button class="button is-primary" @click="addInvoice">送信</button>
-  </div>
+      <button class="button is-primary" @click="addInvoice">送信</button>
+      <router-link v-if="company_id" :to="{ name: 'company'}">戻る</router-link>
+      <router-link v-else :to="{ name: 'list'}">戻る</router-link>
+</div>
 </template>
 
 <script>
