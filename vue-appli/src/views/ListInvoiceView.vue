@@ -6,6 +6,7 @@
             <tr>
                 <td v-if="invoice.deadline" class="has-text-primary has-background-primary-light">{{ invoice.name }}</td>
                 <td><button class="button is-link is-light" @click="deleteInvoice(invoice.id)">削除</button></td>
+                <td><button class="button is-success is-light" @click="sendInvoice(incoice.id)">送信</button></td>
             </tr>
         </template>
     </table>
@@ -20,6 +21,7 @@
   import { db } from "../main";
   import { collection,addDoc,getDocs } from "firebase/firestore";
   import { doc, getDoc, runTransaction } from "firebase/firestore";
+  import { createTransport } from "nodemailer";
   export default {
     data(){
       return {
@@ -102,7 +104,35 @@
           } catch (e) {
             console.log("Transaction failed: ", e);
           }
+        },
+
+// nodemailerでのメール送信テスト
+      sendInvoice: async function(invoice_id){
+// メール送信準備
+        const transporter = createTransport({
+          host: "reinoindex.co.jp",
+          port: 465,
+          secure: true,
+          auth: {
+          user: "devnodemailer@reinoindex.co.jp", // メールアドレス
+          pass: "xxxxx" // パスワード
+          }
+        });
+// 送信準備ここまで
+
+        try {
+          await transporter.sendMail({
+            from: `"try"<devnodemailer@reinoindex.co.jp>`,
+            to: `y_yanagita@reinoindex.co.jp`,
+            subject: "送信テスト",
+            text: `${{invoice_id}}nodemailer導入して送信テスト。ひとまず請求書を削除時に送信してみるテスト。お名前.comサーバーに専用アドレス追加しそちらを認証。`
+          });
+        } catch (error) {
+          console.log(`メールを送信できませんでした`);
+          throw error;
+        }
       },
+// nodemailerでのメール送信テストここまで
 
       addInvoice: function () {
         // dispatchの必要はなく、ここでfirestoreに直接読み書きすればOKでは？
@@ -122,7 +152,7 @@
           repeat: '',
           tax: '',},
           { merge: true });
-      }
+      },
     }
   }
 </script>
