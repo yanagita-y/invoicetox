@@ -1,0 +1,38 @@
+// Vue3への変更に伴いコメントアウト ここから
+// import Vue from 'vue' 
+// Vue3への変更に伴いコメントアウト ここまで
+// Vue3への変更に伴い追加 ここから
+import { createApp } from 'vue'
+// Vue3への変更に伴い追加 ここまで
+import App from './App.vue'
+import router from './router'
+import store from './store'
+// Firestoreから発行されるソース内に含まれるためコメントアウト ここから
+// import { initializeApp } from 'firebase/app'
+// Firestoreから発行されるソース内に含まれるためコメントアウト ここまで
+import { getFirestore } from 'firebase/firestore'
+
+// Vue3への変更に伴いコメントアウト ここから
+// Vue.config.productionTip = false
+// Vue3への変更に伴いコメントアウト ここまで
+
+
+// ここから下のサンプルコードを削除し、Firebaseで発行されたSDKのソースコードを貼り付けてください
+
+
+// ここから上のサンプルコードを削除し、Firebaseで発行されたSDKのソースコードを貼り付けてください
+
+export const db = getFirestore(app);
+
+// Vue3への変更に伴いコメントアウト ここから
+/*
+new Vue({
+  router,
+  store,
+  render: function (h) { return h(App) },
+}).$mount('#app')
+*/
+// Vue3への変更に伴いコメントアウト ここまで
+// Vue3への変更に伴い追加 ここから
+createApp(App).use(store).use(router).mount('#app') 
+// Vue3への変更に伴い追加 ここまで

@@ -4,7 +4,8 @@
     <table>
           <template v-for="invoice in invoices" :key="invoice.id">
             <tr>
-                <td class="has-text-primary has-background-primary-light">{{ invoice.name }}</td><td><button class="button is-link is-light" @click="deleteInvoice(invoice.id)">削除</button></td>
+                <td v-if="invoice.deadline" class="has-text-primary has-background-primary-light">{{ invoice.name }}</td>
+                <td><button class="button is-link is-light" @click="deleteInvoice(invoice.id)">削除</button></td>
             </tr>
         </template>
     </table>
@@ -55,7 +56,8 @@
           console.log(doc.data().name);
           const invoice = {
             id: doc.id,
-            name: doc.data().name
+            name: doc.data().name,
+            deadline: doc.data().deadline
           };
           // selectでloopを回すための変数に追加していく
           this.invoices.push(invoice);
