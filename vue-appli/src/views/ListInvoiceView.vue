@@ -62,15 +62,17 @@
           // console.log(doc);
           // console.log(doc.id);
           // console.log(doc.data().name);
-          const invoice = {
-            id: doc.id,
-            name: doc.data().name,
-            deadline: doc.data().deadline,
-            remain:(parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24))
-          };
+          if(this.company_id===doc.data().company_id){
+            const invoice = {
+              id: doc.id,
+              name: doc.data().name,
+              deadline: doc.data().deadline,
+              remain:(parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24))
+            };
+            this.invoices.push(invoice);
+            console.log(invoice.remain);
+          }
           // selectでloopを回すための変数に追加していく
-          this.invoices.push(invoice);
-          console.log(invoice.remain);
         });
 
       // // firestoreからcompanyの一覧を取得する（selectで表示するため）

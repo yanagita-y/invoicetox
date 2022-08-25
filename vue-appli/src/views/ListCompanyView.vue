@@ -43,7 +43,7 @@
           name: doc.data().name,
           remain:(parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24))
         };
-        if(this.recentRemain>invoice.remain){
+        if(this.company_id===doc.data().company_id && this.recentRemain>invoice.remain){
           this.recentRemain=invoice.remain;
         }
         console.log(this.recentRemain);
