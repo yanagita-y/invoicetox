@@ -8,11 +8,21 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "browserify-zlib": "^0.2.0",
     "bulma": "^0.9.4",
     "core-js": "^3.8.3",
+    "crypto-browserify": "^3.12.0",
     "firebase": "^9.9.2",
+    "https-browserify": "^1.0.0",
     "nodemailer": "^6.7.8",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.0",
+    "util": "^0.12.4",
     "vue": "^3.2.13",
+    "vue-moment": "^4.1.0",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"
   },
