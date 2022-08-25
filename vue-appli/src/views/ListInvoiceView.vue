@@ -1,20 +1,25 @@
 <template>
-  <div class="signup">
+  <div>
     <h1 class="title">{{ name }}</h1>
     <table>
           <template v-for="invoice in invoices" :key="invoice.id">
             <tr>
-                <td v-if="invoice.deadline" class="has-text-primary has-background-primary-light">{{ invoice.name }}</td>
-                <td :class="['invoice.deadline', 'has-text-info has-background-info-light', 'invoice.deadline', 'has-text-danger has-background-danger-light']">{{invoice.deadline}}</td>
-                <td><button class="button is-link is-light" @click="deleteInvoice(invoice.id)">削除</button></td>
+                <td :class="{
+                'has-text-success has-background-success-light':(invoice.remain>=7)
+                ,'has-text-warning has-background-warning-light':(7>invoice.remain)
+                ,'has-text-danger has-background-danger-light':(invoice.remain<=2)
+                }">{{invoice.name}}</td>
+                <td class="has-text-info has-background-info-light">{{ invoice.deadline }}</td>
+                <td class="has-text-link has-background-link-light">まで{{ invoice.remain }}日</td>
+                <td><button class="button is-light" @click="deleteInvoice(invoice.id)">削除</button></td>
                 <!-- <td><button class="button is-success is-light" @click="sendInvoice(invoice.id)">送信</button></td> -->
             </tr>
         </template>
     </table>
 
 
-    <router-link :to="{ name: 'company_invoice_add'}">追加</router-link>
-    <router-link :to="{ name: 'list'}">戻る</router-link>
+    <router-link :to="{ name: 'company_invoice_add'}" class="button is-primary">追加</router-link>
+    <router-link :to="{ name: 'list'}" class="button is-light">戻る</router-link>
   </div>
 </template>
 
@@ -54,17 +59,18 @@
         // firestoreからinvoiceの一覧を取得する（一覧表示のため）
         const querySnapshot2 = await getDocs(collection(db, "invoice"));
         querySnapshot2.forEach((doc) => {
-          console.log(doc);
-          console.log(doc.id);
-          console.log(doc.data().name);
+          // console.log(doc);
+          // console.log(doc.id);
+          // console.log(doc.data().name);
           const invoice = {
             id: doc.id,
             name: doc.data().name,
-            deadline: doc.data().deadline
+            deadline: doc.data().deadline,
+            remain:(parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24))
           };
           // selectでloopを回すための変数に追加していく
           this.invoices.push(invoice);
-          console.log(this.invoices)
+          console.log(invoice.remain);
         });
 
       // // firestoreからcompanyの一覧を取得する（selectで表示するため）

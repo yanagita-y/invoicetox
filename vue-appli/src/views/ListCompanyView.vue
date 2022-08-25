@@ -1,15 +1,20 @@
 <template>
   <div class="signup">
-    <h1>ホーム</h1>
+    <h1 class="title">一覧</h1>
     <table>
         <template v-for="company in companies" :key="company.id">
             <tr>
-                <!-- <td><button>{{ company.name }}</button></td><td><button>削除</button></td> -->
-                <td><router-link :to="{ name: 'company', params: {id: company.id } }">{{ company.name }}</router-link></td><td><button @click="deleteCompany(company.id)">削除</button></td>
+              <td :class="{
+              'has-text-success has-background-success-light':(this.recentRemain>=7)
+              ,'has-text-warning has-background-warning-light':(7>this.recentRemain)
+              ,'has-text-danger has-background-danger-light':(this.recentRemain<=2)
+              }">
+              <router-link :to="{ name: 'company', params: {id: company.id } }" >{{ company.name }}</router-link></td>
+              <td><button @click="deleteCompany(company.id)" class="button is-light">削除</button></td>
             </tr>
         </template>
     </table>
-    <router-link :to="{ name: 'invoice_add'}">追加</router-link>
+    <router-link :to="{ name: 'invoice_add'}" class="button is-primary">追加</router-link>
   </div>
 </template>
 
@@ -25,7 +30,8 @@
         password: '',
         flag: false,
         companies: [],
-        invoices: []
+        invoices: [],
+        recentRemain: '10'
       }
     },
     mounted: async function(){
@@ -34,8 +40,13 @@
       querySnapshot2.forEach((doc) => {
         const invoice = {
           id: doc.id,
-          name: doc.data().name
+          name: doc.data().name,
+          remain:(parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24))
         };
+        if(this.recentRemain>invoice.remain){
+          this.recentRemain=invoice.remain;
+        }
+        console.log(this.recentRemain);
         // selectでloopを回すための変数に追加していく
         this.invoices.push(invoice);
       });

@@ -54,8 +54,8 @@
         </tr> -->
       </table>
       <button class="button is-primary" @click="addInvoice">送信</button>
-      <router-link v-if="company_id" :to="{ name: 'company'}">戻る</router-link>
-      <router-link v-else :to="{ name: 'list'}">戻る</router-link>
+      <router-link v-if="company_id" :to="{ name: 'company'}" class="button is-light">戻る</router-link>
+      <router-link v-else :to="{ name: 'list'}" class="button is-light">戻る</router-link>
 </div>
 </template>
 
@@ -121,6 +121,7 @@
           repeat: '',
           tax: '',},
           { merge: true });
+          alert(this.company_name + 'に' + this.caseName + 'の請求書を追加しました');
       }
     }
   }
