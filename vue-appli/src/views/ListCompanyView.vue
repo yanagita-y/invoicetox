@@ -5,9 +5,9 @@
         <template v-for="company in companies" :key="company.id">
             <tr>
               <td :class="{
-              'has-text-success has-background-success-light':(this.recentRemain>=7)
-              ,'has-text-warning has-background-warning-light':(7>this.recentRemain)
-              ,'has-text-danger has-background-danger-light':(this.recentRemain<=2)
+              'has-text-success has-background-success-light':(this.remains[company.id]>=7)
+              ,'has-text-warning has-background-warning-light':(7>this.remains[company.id])
+              ,'has-text-danger has-background-danger-light':(this.remains[company.id]<=2)
               }">
               <router-link :to="{ name: 'company', params: {id: company.id } }" >{{ company.name }}</router-link></td>
               <td><button @click="deleteCompany(company.id)" class="button is-light">削除</button></td>
@@ -31,6 +31,7 @@
         flag: false,
         companies: [],
         invoices: [],
+        remains: [],
         recentRemain: '10'
       }
     },
@@ -38,17 +39,16 @@
       // firestoreからinvoiceの一覧を取得する（一覧表示のため）
       const querySnapshot2 = await getDocs(collection(db, "invoice"));
       querySnapshot2.forEach((doc) => {
-        const invoice = {
-          id: doc.id,
-          name: doc.data().name,
-          remain:(parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24))
-        };
-        if(this.company_id===doc.data().company_id && this.recentRemain>invoice.remain){
-          this.recentRemain=invoice.remain;
+
+        const remain = (parseInt(new Date(doc.data().deadline)/1000/60/60/24) - parseInt(new Date()/1000/60/60/24));
+        if(typeof this.remains[doc.data().company_id] == 'undefined'){
+          this.remains[doc.data().company_id] = remain;
         }
-        console.log(this.recentRemain);
-        // selectでloopを回すための変数に追加していく
-        this.invoices.push(invoice);
+        else{
+          if(remain < this.remains[doc.data().company_id]){
+              this.remains[doc.data().company_id] = remain;
+          }
+        }
       });
 
       // firestoreからcompanyの一覧を取得する（selectで表示するため）
