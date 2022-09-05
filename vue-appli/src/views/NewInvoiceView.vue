@@ -26,7 +26,7 @@
             </td>
           </tr>
           <tr>
-            <th class="is-vcentered">案件名</th><td><input class="input" type="txt" v-model="caseName"></td>
+            <th class="is-vcentered">案件名</th><td><input class="input" type="text" v-model="caseName"></td>
           </tr>
           <!-- <tr>
             <td>案件担当者名：</td><td><input type="txt" v-model="CaseManager"></td>
@@ -105,6 +105,9 @@
         name: '',
         mailaddress: '',
         password: '',
+        company: "",
+        caseName: "",
+        deadline: "",
         flag: false,
         companies: [],
         company_id: false,
@@ -161,17 +164,12 @@
           tax: '',},
           { merge: true });
           this.message = '「' + this.caseName + '」の請求書を追加しました';
-          console.log(1);
           this.caseName = '';
-          console.log(2);
           this.deadline = '';
-          console.log(3);
-          if(!this.company_id){
+          if(typeof this.company_id == 'undefined'){
             this.company = null
           }
-          console.log(4);
           this.isSuccessModal = true
-          console.log(5);
       }
     }
   }
