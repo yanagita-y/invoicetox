@@ -1,11 +1,11 @@
 <template>
   <div class="signup">
-    <h2 class="subtitle has-text-centered">会社名一覧</h2>
+    <h2 class="subtitle has-text-centered">会社一覧</h2>
     
     <div  v-if="companies.length == 0">
       <p class="has-text-centered">読み込み中...</p>
       <progress class="progress is-small is-primary mb-6" max="100">100%</progress>
-  </div>
+    </div>
 
     
     <table v-else class="table is-fullwidth">
@@ -40,50 +40,66 @@
               <td class="has-text-success has-background-success-light"><a href="#" style="pointer-events: none;">請求書発行期限まで7日以上</a></td>
             </tr>
             <tr>
-              <td class="has-text-warning has-background-warning-light"><a href="#" style="pointer-events: none;">請求書発行期限まで2日〜7日</a></td>
+              <td class="has-text-warning has-background-warning-light"><a href="#" style="pointer-events: none;">請求書発行期限まで2日〜6日</a></td>
             </tr>
             <tr>
               <td class="has-text-danger has-background-danger-light"><a href="#" style="pointer-events: none;">請求書発行期限まで2日未満</a></td>
             </tr>
+            <tr>
+              <td class=""><a href="#" style="pointer-events: none;">請求書登録なし</a></td>
+            </tr>
           </tbody>
     </table>
     
-    <div class="modal is-active" v-if="isConfirmModal">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">削除確認</p>
-          <button class="delete" aria-label="close" @click="isConfirmModal=false">></button>
-        </header>
-        <section class="modal-card-body">
-          {{deleteCompanyName}}の情報（会社情報、請求書情報）を削除してよろしいですか？
-        </section>
-        <footer class="modal-card-foot">
-          <button class="button is-danger" @click="deleteCompany(deleteCompanyId)">削除する</button>
-          <button class="button" @click="isConfirmModal=false">キャンセル</button>
-        </footer>
+    <transition name="fade">
+      <div class="modal is-active" v-if="isConfirmModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">削除確認</p>
+            <button class="delete" aria-label="close" @click="isConfirmModal=false">></button>
+          </header>
+          <section class="modal-card-body">
+            「{{deleteCompanyName}}」の情報（会社情報、請求書情報）を削除してよろしいですか？
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button is-danger" @click="deleteCompany(deleteCompanyId)">削除する</button>
+            <button class="button" @click="isConfirmModal=false">キャンセル</button>
+          </footer>
+        </div>
       </div>
-    </div>
+    </transition>
 
-    <div class="modal is-active" v-if="isSuccessModal">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">削除完了</p>
-          <button class="delete" aria-label="close" @click="isSuccessModal=false">></button>
-        </header>
-        <section class="modal-card-body">
-          削除しました
-        </section>
-        <footer class="modal-card-foot">
-          <button class="button" @click="isSuccessModal=false">閉じる</button>
-        </footer>
+    <transition name="fade">
+      <div class="modal is-active" v-if="isSuccessModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title">削除完了</p>
+            <button class="delete" aria-label="close" @click="isSuccessModal=false">></button>
+          </header>
+          <section class="modal-card-body">
+            削除しました
+          </section>
+          <footer class="modal-card-foot">
+            <button class="button" @click="isSuccessModal=false">閉じる</button>
+          </footer>
+        </div>
       </div>
-    </div>
+    </transition>
 
   </div>
 </template>
 
+<style scoped>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s ease;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
+</style>  
 <script>
   import { db } from "../main";
   import { doc,collection,getDocs,runTransaction } from "firebase/firestore";

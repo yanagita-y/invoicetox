@@ -13,7 +13,7 @@
   <main class="container">
 
     <p class="has-text-right mt-3">今日の日付：{{ today }}</p>
-    <div id ="app">
+    <div id ="app" class="mt-6">
       <router-view/>
     </div>
   </main>
@@ -28,7 +28,7 @@
     },
     mounted: function(){
       const now = new Date();
-      this.today = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() ;
+      this.today = now.getFullYear() + '-' + ( '00' + (now.getMonth() + 1) ).slice( -2 ) + '-' + ( '00' + (now.getDate()) ).slice( -2 );
 
     }
   }
