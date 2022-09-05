@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="title">{{ name }}</h1>
+    <h2 class="subtitle">{{ name }}</h2>
     <table>
           <template v-for="invoice in invoices" :key="invoice.id">
             <tr>

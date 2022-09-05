@@ -1,20 +1,86 @@
 <template>
   <div class="signup">
-    <h1 class="title">一覧</h1>
-    <table>
+    <h2 class="subtitle has-text-centered">会社名一覧</h2>
+    
+    <div  v-if="companies.length == 0">
+      <p class="has-text-centered">読み込み中...</p>
+      <progress class="progress is-small is-primary mb-6" max="100">100%</progress>
+  </div>
+
+    
+    <table v-else class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th class="has-text-centered">会社名</th>
+          <th style="width: 5em;">&nbsp;</th>
+        </tr>
+      </thead>
         <template v-for="company in companies" :key="company.id">
             <tr>
               <td :class="{
+              'is-vcentered' :true,
               'has-text-success has-background-success-light':(this.remains[company.id]>=7)
               ,'has-text-warning has-background-warning-light':(7>this.remains[company.id])
               ,'has-text-danger has-background-danger-light':(this.remains[company.id]<=2)
               }">
-              <router-link :to="{ name: 'company', params: {id: company.id } }" >{{ company.name }}</router-link></td>
-              <td><button @click="deleteCompany(company.id)" class="button is-light">削除</button></td>
+              <router-link :to="{ name: 'company', params: {id: company.id } }">{{ company.name }}</router-link></td>
+              <td><button @click="showDeleteCompanyModal(company.id, company.name)" class="button is-light">削除</button></td>
             </tr>
         </template>
     </table>
-    <router-link :to="{ name: 'invoice_add'}" class="button is-primary">追加</router-link>
+    <p class="has-text-right"><router-link :to="{ name: 'invoice_add'}" class="button is-primary">請求書を追加する</router-link></p>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>※凡例</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr>
+              <td class="has-text-success has-background-success-light"><a href="#" style="pointer-events: none;">請求書発行期限まで7日以上</a></td>
+            </tr>
+            <tr>
+              <td class="has-text-warning has-background-warning-light"><a href="#" style="pointer-events: none;">請求書発行期限まで2日〜7日</a></td>
+            </tr>
+            <tr>
+              <td class="has-text-danger has-background-danger-light"><a href="#" style="pointer-events: none;">請求書発行期限まで2日未満</a></td>
+            </tr>
+          </tbody>
+    </table>
+    
+    <div class="modal is-active" v-if="isConfirmModal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">削除確認</p>
+          <button class="delete" aria-label="close" @click="isConfirmModal=false">></button>
+        </header>
+        <section class="modal-card-body">
+          {{deleteCompanyName}}の情報（会社情報、請求書情報）を削除してよろしいですか？
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-danger" @click="deleteCompany(deleteCompanyId)">削除する</button>
+          <button class="button" @click="isConfirmModal=false">キャンセル</button>
+        </footer>
+      </div>
+    </div>
+
+    <div class="modal is-active" v-if="isSuccessModal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <header class="modal-card-head">
+          <p class="modal-card-title">削除完了</p>
+          <button class="delete" aria-label="close" @click="isSuccessModal=false">></button>
+        </header>
+        <section class="modal-card-body">
+          削除しました
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button" @click="isSuccessModal=false">閉じる</button>
+        </footer>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -32,7 +98,11 @@
         companies: [],
         invoices: [],
         remains: [],
-        recentRemain: '10'
+        recentRemain: '10',
+        isConfirmModal: false,
+        isSuccessModal: false,
+        deleteCompanyId : null,
+        deleteCompanyName : null,
       }
     },
     mounted: async function(){
@@ -71,7 +141,13 @@
       toggleFlag: function () {
         this.flag = !this.flag;
       },
+      showDeleteCompanyModal(company_id, company_name){
+        this.deleteCompanyId = company_id;
+        this.deleteCompanyName = company_name;
+        this.isConfirmModal = true;
+      },
       deleteCompany: async function(company_id){
+        
 
         // console.log('削除するIDの一覧')
         // for(let i = 0; i < deleteList.length; i++){
@@ -96,7 +172,8 @@
               // 会社データを削除
               transaction.delete(doc(db, "company", company_id));
             });
-            alert('削除しました');
+            this.isConfirmModal = false;
+            this.isSuccessModal = true;
             // 表示している一覧から削除した会社を消す
             for(let i=0; i<this.companies.length; i++){
               if(this.companies[i].id == company_id){

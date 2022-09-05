@@ -1,6 +1,6 @@
 <template>
   <div class="signup">
-    <h1>新規登録</h1>
+    <h2 class="subtitle">新規登録</h2>
     <table>
         <tr v-if="flag"></tr>
 <!-- 作成したデータベースの入力項目を作成 -->
